@@ -7,6 +7,7 @@
   ],
   "scripts": {
     "coordinator": "node packages/coordinator-cli/bin/ai-coordinator.js",
+    "agents-coordinator": "node packages/coordinator-cli/bin/ai-coordinator.js",
     "doctor": "node packages/coordinator-cli/bin/ai-coordinator.js doctor",
     "init": "node packages/coordinator-cli/bin/ai-coordinator.js init"
   }

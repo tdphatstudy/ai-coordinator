@@ -7,7 +7,7 @@ import { copyPath, ensureDir, fileExists, readDirNames, removePath } from './io.
 import { resolveCoordinatorRoot, resolveStandardsRoot } from './paths.js';
 import { buildApplyRecords } from './records.js';
 import { loadConfig, loadState, saveConfig, saveState } from './state.js';
-import { printJson, printMessage, printTable } from './ui.js';
+import { printCommandCard, printJson, printMessage, printTable } from './ui.js';
 import { validateStandards } from './validator.js';
 
 const pickArgValue = (args, name, fallback) => {
@@ -74,12 +74,12 @@ export const runInit = async (args) => {
   await saveConfig(config);
   await saveState(state);
 
-  printJson({
+  printCommandCard('Init Result', {
     command: 'init',
     mode: applied.mode,
     agents: config.enabledAgents,
-    installedRecords: applied.results.length,
-    backup: applied.backup.name
+    installed_records: applied.results.length,
+    backup_id: applied.backup.name
   });
 };
 
@@ -99,7 +99,12 @@ export const runLink = async (args) => {
   await saveConfig(config);
   await saveState(state);
 
-  printJson({ command: 'link', mode: applied.mode, records: applied.results.length });
+  printCommandCard('Link Result', {
+    command: 'link',
+    mode: applied.mode,
+    records: applied.results.length,
+    backup_id: applied.backup.name
+  });
 };
 
 export const runSync = async (args) => {
@@ -119,7 +124,12 @@ export const runSync = async (args) => {
   await saveConfig(config);
   await saveState(state);
 
-  printJson({ command: 'sync', mode: applied.mode, records: applied.results.length });
+  printCommandCard('Sync Result', {
+    command: 'sync',
+    mode: applied.mode,
+    records: applied.results.length,
+    backup_id: applied.backup.name
+  });
 };
 
 export const runDoctorCommand = async (args) => {
@@ -147,16 +157,14 @@ export const runList = async () => {
   const mcp = await readDirNames(path.join(standardsRoot, 'mcp'));
   const agents = await readDirNames(path.join(standardsRoot, 'agents'));
 
-  printJson({
+  printCommandCard('List Result', {
     command: 'list',
     agents: config.enabledAgents,
-    applyMode: config.applyMode,
-    assets: {
-      skills,
-      workflows,
-      mcp,
-      agents
-    },
+    apply_mode: config.applyMode,
+    skills_count: skills.length,
+    workflows_count: workflows.length,
+    mcp_count: mcp.length,
+    agents_count: agents.length,
     backups: state.backups.map((item) => item.name)
   });
 };
@@ -167,7 +175,11 @@ export const runPriority = async (args) => {
   const orderRaw = pickArgValue(args, '--order', null);
 
   if (!agent || !orderRaw) {
-    printJson({ command: 'priority', priority: config.priority });
+    printCommandCard('Priority Status', {
+      command: 'priority',
+      default_order: config.priority.defaultOrder,
+      configured_agents: Object.keys(config.priority.byAgent)
+    });
     return;
   }
 
@@ -185,7 +197,11 @@ export const runPriority = async (args) => {
   config.priority.byAgent[agent] = parsedOrder;
   await saveConfig(config);
 
-  printJson({ command: 'priority', agent, order: parsedOrder });
+  printCommandCard('Priority Updated', {
+    command: 'priority',
+    agent,
+    order: parsedOrder
+  });
 };
 
 export const runBackup = async () => {
@@ -193,7 +209,11 @@ export const runBackup = async () => {
   const backup = await createBackup(state.installRecords || []);
   state.backups = [backup, ...state.backups].slice(0, 20);
   await saveState(state);
-  printJson({ command: 'backup', backup: backup.name, records: backup.records.length });
+  printCommandCard('Backup Result', {
+    command: 'backup',
+    backup_id: backup.name,
+    records: backup.records.length
+  });
 };
 
 export const runRestore = async (args) => {
@@ -214,7 +234,11 @@ export const runRestore = async (args) => {
     await copyPath(record.backupPath, record.targetPath);
   }
 
-  printJson({ command: 'restore', backup: backupName, restored: backup.records.length });
+  printCommandCard('Restore Result', {
+    command: 'restore',
+    backup_id: backupName,
+    restored_records: backup.records.length
+  });
 };
 
 export const runRemove = async () => {
@@ -224,7 +248,10 @@ export const runRemove = async () => {
   }
   state.installRecords = [];
   await saveState(state);
-  printJson({ command: 'remove', removed: true });
+  printCommandCard('Remove Result', {
+    command: 'remove',
+    removed: true
+  });
 };
 
 export const runUpdate = async () => {
@@ -237,7 +264,11 @@ export const runUpdate = async () => {
   state.lastSyncVersion = 'v1';
   state.backups = [applied.backup, ...state.backups].slice(0, 20);
   await saveState(state);
-  printJson({ command: 'update', records: applied.results.length, backup: applied.backup.name });
+  printCommandCard('Update Result', {
+    command: 'update',
+    records: applied.results.length,
+    backup_id: applied.backup.name
+  });
 };
 
 export const runCommand = async (command, args) => {
