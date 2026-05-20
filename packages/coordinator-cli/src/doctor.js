@@ -2,7 +2,7 @@ import { buildApplyRecords } from './records.js';
 import { fileExists, readDirNames, safeStat } from './io.js';
 
 export const runDoctor = async (config, state) => {
-  const records = buildApplyRecords(config.enabledAgents);
+  const { records, adapters } = await buildApplyRecords(config.enabledAgents);
   const grouped = {};
 
   for (const record of records) {
@@ -13,6 +13,8 @@ export const runDoctor = async (config, state) => {
         discoverable: false,
         priority_layer: config.priority.byAgent[record.agent] || config.priority.defaultOrder,
         last_sync_version: state.lastSyncVersion,
+        capabilities: adapters[record.agent]?.capabilities || null,
+        docs: adapters[record.agent]?.officialDocs || {},
         assets: []
       };
     }

@@ -1,9 +1,38 @@
 {
   "agent": "codex",
-  "targetBase": "~/.codex",
-  "mappings": {
-    "skills": "skills",
-    "workflows": "workflows",
-    "mcp": "mcp"
-  }
+  "displayName": "OpenAI Codex CLI",
+  "officialDocs": {
+    "config": "https://developers.openai.com/codex/config-basic",
+    "reference": "https://developers.openai.com/codex/config-reference",
+    "mcp": "https://developers.openai.com/codex/mcp"
+  },
+  "verifiedAt": "2026-05-20",
+  "capabilities": {
+    "supportsSkills": true,
+    "supportsWorkflows": true,
+    "supportsMcp": true,
+    "supportsSymlink": true
+  },
+  "targetCandidates": {
+    "skills": [
+      "~/.codex/skills",
+      "${PROJECT_ROOT}/.codex/skills"
+    ],
+    "workflows": [
+      "~/.codex/workflows",
+      "${PROJECT_ROOT}/.codex/workflows"
+    ],
+    "mcp": [
+      "~/.codex/mcp",
+      "${PROJECT_ROOT}/.codex/mcp"
+    ],
+    "agents": [
+      "~/.codex/agents",
+      "${PROJECT_ROOT}/.codex/agents"
+    ]
+  },
+  "notes": [
+    "Codex config precedence includes project and user config layers.",
+    "Use project-local targets when repository-scoped behavior is required."
+  ]
 }

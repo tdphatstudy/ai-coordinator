@@ -14,7 +14,8 @@ export const ApplyMode = Object.freeze({
 export const AssetKind = Object.freeze({
   SKILLS: 'skills',
   WORKFLOWS: 'workflows',
-  MCP: 'mcp'
+  MCP: 'mcp',
+  AGENTS: 'agents'
 });
 
 export const PriorityLayer = Object.freeze({
@@ -47,7 +48,8 @@ export const SupportedAgents = Object.freeze([
 export const SupportedAssetKinds = Object.freeze([
   AssetKind.SKILLS,
   AssetKind.WORKFLOWS,
-  AssetKind.MCP
+  AssetKind.MCP,
+  AssetKind.AGENTS
 ]);
 
 export const PriorityDefaultOrder = Object.freeze([

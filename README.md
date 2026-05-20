@@ -1,21 +1,28 @@
 # ai-coordinator
 
-Single standard for `skills`, `workflows`, and `mcp` assets across multiple coding CLI agents.
+Production-focused coordinator for `skills`, `workflows`, `mcp`, and `agent profiles` across multiple coding CLI agents.
 
-## V1 Goals
-- Clone once, run one setup flow, and start with curated defaults.
-- Support `claude`, `codex`, `qwen`, and `antigravity` adapters.
-- Prefer symlink/junction, then fallback to safe sync-copy automatically.
-- Provide explicit priority layers and per-agent override controls.
+## Strategy
+- **Official baseline**: Adapter mappings and capability assumptions are anchored to official docs.
+- **Curated extension**: Marketplace/community packs are included only after schema and quality checks.
+- **Cross-platform reliability**: Link-first (`symlink`/`junction`) with automatic sync fallback.
 
 ## Repo Layout
 - `packages/coordinator-cli` - Node.js CLI (`agent-coordinator`)
-- `standards` - canonical shared assets (`skills`, `workflows`, `mcp`)
+- `standards` - canonical shared assets (`skills`, `workflows`, `mcp`, `agents`)
 - `adapters` - agent mapping metadata
 - `compatibility` - support matrix and limitations
 - `scripts` - setup helpers for PowerShell and shell
 
-## Quickstart
+## Supported Agents
+- Claude Code
+- OpenAI Codex CLI
+- Qwen Code
+- Antigravity CLI 2.0
+
+See `compatibility/matrix.json` for source references and verification status.
+
+## Quick Start
 
 ### Prerequisite
 - Node.js `>=18`
@@ -36,11 +43,15 @@ node packages/coordinator-cli/bin/ai-coordinator.js init --mode auto --agents al
 node packages/coordinator-cli/bin/ai-coordinator.js doctor
 ```
 
+## CLI Branding
+The CLI includes a startup banner and status icons, and includes project branding with:
+- `https://tdphat.io.vn/`
+
 ## Commands
 - `init` - initialize config/state and apply assets to selected agents
 - `link` - force link/junction mode
 - `sync` - force copy/sync mode
-- `doctor` - show health, discoverability, and priority layer per agent
+- `doctor [--json] [--verbose]` - show health, discoverability, docs sources, capabilities
 - `list` - list installed assets and backup ids
 - `update` - re-apply current standards to enabled agents
 - `priority` - inspect or set per-agent priority order
@@ -58,23 +69,34 @@ Set per-agent priority example:
 node packages/coordinator-cli/bin/ai-coordinator.js priority --agent claude --order agent_global,coordinator_shared,project_local,user_override
 ```
 
-## Discoverability
-After successful `init`, each adapter target receives `skills/workflows/mcp` assets under agent-specific directories:
-- `~/.claude/*`
-- `~/.codex/*`
-- `~/.qwen/*`
-- `~/.antigravity/*`
+## Asset Catalogs
+The repository ships detailed prompts and workflows covering software delivery from idea to production:
+- Skills: backend, frontend, testing, review, devops, security, data, incident response
+- Workflows: feature delivery, bugfix, architecture decision, release hardening, migration, postmortem
+- MCP presets: local-safe baseline, provider placeholders, team collaboration
+- Agent profiles: backend architect, QA guardian, incident commander
 
-Then run the agent command (for example `/skills`) to verify visibility in the target CLI.
+Prompts are written in English and include metadata fields (`id`, `title`, `description`, `scope`, `inputs`, `outputs`, `constraints`, `supported_agents`, `degradation_mode`, `source`).
+
+## Validation and Safety
+- Standards are validated before apply (`init`, `link`, `sync`, `update`).
+- Backup snapshots are created before changes.
+- Failed apply attempts auto-restore from backup.
 
 ## Cross-Platform Behavior
 - `--mode auto`: try link first, fallback to sync if link fails.
 - `--mode link`: require links/junctions; errors if unsupported.
 - `--mode sync`: use managed copy only.
 
-## Compatibility
-See `compatibility/matrix.json` for current support and feature coverage.
+## Official Documentation Sources
+- Claude: `https://code.claude.com/docs/en/claude-directory`
+- Codex: `https://developers.openai.com/codex/config-basic`
+- Qwen: `https://qwenlm.github.io/qwen-code-docs/en/users/configuration/settings/`
+- Antigravity: `https://antigravity.google/docs/cli-overview`
 
-## Notes
-- This project never stores credentials in repo files.
-- MCP presets use placeholders only (for example env var names).
+## Security Notes
+- Never store credentials in repository files.
+- MCP provider presets only contain env var placeholders.
+
+## Vietnamese Documentation
+- See `README.vi.md` for a full Vietnamese guide.

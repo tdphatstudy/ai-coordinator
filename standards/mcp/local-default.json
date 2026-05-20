@@ -1,16 +1,32 @@
 {
   "presetId": "local-default",
-  "description": "Local-safe MCP baseline without embedded secrets",
+  "id": "local_default_safe",
+  "description": "Local-safe MCP baseline without embedded secrets for repository workflows",
+  "scope": "local_tools",
+  "supported_agents": ["claude", "codex", "qwen", "antigravity"],
+  "source": "official_plus_curated_v1",
   "servers": [
     {
       "name": "filesystem",
       "enabled": true,
-      "mode": "local"
+      "mode": "local",
+      "purpose": "workspace_read_write"
     },
     {
       "name": "git",
       "enabled": true,
-      "mode": "local"
+      "mode": "local",
+      "purpose": "version_control_context"
+    },
+    {
+      "name": "terminal",
+      "enabled": true,
+      "mode": "local",
+      "purpose": "validated_command_execution"
     }
+  ],
+  "constraints": [
+    "no_embedded_secrets",
+    "explicit_permission_for_external_network_tools"
   ]
 }

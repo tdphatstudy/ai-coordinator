@@ -1,4 +1,5 @@
 import path from 'node:path';
+import fs from 'node:fs/promises';
 import { copyPath, ensureDir, fileExists } from './io.js';
 import { resolveBackupDir } from './paths.js';
 
@@ -21,7 +22,16 @@ export const createBackup = async (records) => {
     }
     const safeName = `${record.agent}-${record.kind}`;
     const backupPath = path.join(targetRoot, safeName);
-    await copyPath(record.targetPath, backupPath);
+    let sourcePath = record.targetPath;
+    try {
+      const stat = await fs.lstat(record.targetPath);
+      if (stat.isSymbolicLink()) {
+        sourcePath = await fs.realpath(record.targetPath);
+      }
+      await copyPath(sourcePath, backupPath);
+    } catch {
+      continue;
+    }
     stored.push({ ...record, backupPath });
   }
 

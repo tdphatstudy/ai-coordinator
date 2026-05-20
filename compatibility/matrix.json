@@ -1,29 +1,57 @@
 {
-  "version": "v1",
+  "version": "v1.1",
+  "strategy": "official_plus_curated",
   "agents": [
     {
       "id": "claude",
       "os": ["windows", "linux", "macos"],
-      "features": ["init", "link", "sync", "doctor", "priority", "update", "backup", "restore", "remove"]
+      "features": ["init", "link", "sync", "doctor", "priority", "update", "backup", "restore", "remove"],
+      "assetKinds": ["skills", "workflows", "mcp", "agents"],
+      "docs": [
+        "https://code.claude.com/docs/en/claude-directory",
+        "https://code.claude.com/docs/en/skills",
+        "https://code.claude.com/docs/en/mcp"
+      ],
+      "verification": "verified_with_official_directory_docs"
     },
     {
       "id": "codex",
       "os": ["windows", "linux", "macos"],
-      "features": ["init", "link", "sync", "doctor", "priority", "update", "backup", "restore", "remove"]
+      "features": ["init", "link", "sync", "doctor", "priority", "update", "backup", "restore", "remove"],
+      "assetKinds": ["skills", "workflows", "mcp", "agents"],
+      "docs": [
+        "https://developers.openai.com/codex/config-basic",
+        "https://developers.openai.com/codex/config-reference",
+        "https://developers.openai.com/codex/mcp"
+      ],
+      "verification": "verified_with_official_config_docs"
     },
     {
       "id": "qwen",
       "os": ["windows", "linux", "macos"],
-      "features": ["init", "link", "sync", "doctor", "priority", "update", "backup", "restore", "remove"]
+      "features": ["init", "link", "sync", "doctor", "priority", "update", "backup", "restore", "remove"],
+      "assetKinds": ["skills", "workflows", "mcp", "agents"],
+      "docs": [
+        "https://qwenlm.github.io/qwen-code-docs/en/users/configuration/settings/",
+        "https://qwenlm.github.io/qwen-code-docs/en/"
+      ],
+      "verification": "verified_with_official_configuration_docs"
     },
     {
       "id": "antigravity",
       "os": ["windows", "linux", "macos"],
-      "features": ["init", "link", "sync", "doctor", "priority", "update", "backup", "restore", "remove"]
+      "features": ["init", "link", "sync", "doctor", "priority", "update", "backup", "restore", "remove"],
+      "assetKinds": ["skills", "workflows", "mcp", "agents"],
+      "docs": [
+        "https://antigravity.google/docs/cli-overview",
+        "https://github.com/google-antigravity/antigravity-cli"
+      ],
+      "verification": "partially_verified_public_overview_only"
     }
   ],
   "notes": [
     "When symlink/junction fails, CLI falls back to sync mode.",
-    "Discoverability depends on agent-side file-based loading behavior."
+    "Discoverability depends on agent-side file-based loading behavior.",
+    "Antigravity public docs currently expose limited configuration path details."
   ]
 }

@@ -1,11 +1,11 @@
 import path from 'node:path';
-import { resolveAgentTargets } from './adapter-targets.js';
+import { resolveAgentTargets } from './adapters.js';
 import { SupportedAgents, SupportedAssetKinds } from './enums.js';
 import { resolveStandardsRoot } from './paths.js';
 
-export const buildApplyRecords = (enabledAgents) => {
+export const buildApplyRecords = async (enabledAgents) => {
   const standardsRoot = resolveStandardsRoot();
-  const targets = resolveAgentTargets();
+  const { targets, adapters } = await resolveAgentTargets();
   const selected = enabledAgents?.length ? enabledAgents : SupportedAgents;
   const records = [];
 
@@ -18,11 +18,12 @@ export const buildApplyRecords = (enabledAgents) => {
       records.push({
         agent,
         kind,
+        adapter: adapters[agent],
         sourcePath: path.join(standardsRoot, kind),
         targetPath: agentTargets[kind]
       });
     }
   }
 
-  return records;
+  return { records, adapters };
 };

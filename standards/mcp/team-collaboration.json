@@ -1,0 +1,32 @@
+{
+  "presetId": "team-collaboration",
+  "id": "team_collaboration_bundle",
+  "description": "MCP preset for collaborative delivery workflows with planning, docs, and repository tooling",
+  "scope": "team_delivery",
+  "supported_agents": ["claude", "codex", "qwen", "antigravity"],
+  "source": "official_plus_curated_v1",
+  "servers": [
+    {
+      "name": "filesystem",
+      "enabled": true,
+      "mode": "local",
+      "purpose": "shared_workspace_context"
+    },
+    {
+      "name": "git",
+      "enabled": true,
+      "mode": "local",
+      "purpose": "history_and_diff_analysis"
+    },
+    {
+      "name": "browser",
+      "enabled": true,
+      "mode": "local",
+      "purpose": "manual_verification_and_preview"
+    }
+  ],
+  "constraints": [
+    "review_external_requests_before_fetch",
+    "avoid_destructive_commands_without_confirmation"
+  ]
+}

@@ -4,9 +4,11 @@ import { createBackup } from './backup.js';
 import { runDoctor } from './doctor.js';
 import { ApplyMode, PriorityDefaultOrder, SupportedAgents } from './enums.js';
 import { copyPath, ensureDir, fileExists, readDirNames, removePath } from './io.js';
-import { resolveBackupDir, resolveCoordinatorRoot, resolveStandardsRoot } from './paths.js';
+import { resolveCoordinatorRoot, resolveStandardsRoot } from './paths.js';
 import { buildApplyRecords } from './records.js';
 import { loadConfig, loadState, saveConfig, saveState } from './state.js';
+import { printJson, printMessage, printTable } from './ui.js';
+import { validateStandards } from './validator.js';
 
 const pickArgValue = (args, name, fallback) => {
   const index = args.indexOf(name);
@@ -35,8 +37,21 @@ const parseMode = (args) => {
   return ApplyMode.AUTO;
 };
 
-const printJson = (value) => {
-  process.stdout.write(`${JSON.stringify(value, null, 2)}\n`);
+const hasFlag = (args, flag) => args.includes(flag);
+
+const summarizeDoctorRows = (report) => Object.entries(report).map(([agent, details]) => {
+  const assetsState = details.assets
+    .map((asset) => `${asset.kind}:${asset.exists ? asset.linkType : 'missing'}/${asset.itemCount}`)
+    .join(' | ');
+  return `${agent} | discoverable=${details.discoverable} | linked_or_synced=${details.linked_or_synced} | assets=${assetsState}`;
+});
+
+const validateBeforeApply = async () => {
+  const validation = await validateStandards();
+  if (!validation.valid) {
+    printJson({ command: 'validate', valid: false, errors: validation.errors });
+    throw new Error('Standards validation failed');
+  }
 };
 
 export const runInit = async (args) => {
@@ -48,7 +63,8 @@ export const runInit = async (args) => {
   config.applyMode = mode;
 
   await ensureDir(resolveCoordinatorRoot());
-  const records = buildApplyRecords(config.enabledAgents);
+  await validateBeforeApply();
+  const { records } = await buildApplyRecords(config.enabledAgents);
   const applied = await applyRecords(records, config.applyMode);
 
   state.installRecords = applied.results;
@@ -74,7 +90,8 @@ export const runLink = async (args) => {
   config.enabledAgents = selectedAgents;
   config.applyMode = ApplyMode.LINK;
 
-  const records = buildApplyRecords(config.enabledAgents);
+  await validateBeforeApply();
+  const { records } = await buildApplyRecords(config.enabledAgents);
   const applied = await applyRecords(records, ApplyMode.LINK);
   state.installRecords = applied.results;
   state.backups = [applied.backup, ...state.backups].slice(0, 20);
@@ -92,7 +109,8 @@ export const runSync = async (args) => {
   config.enabledAgents = selectedAgents;
   config.applyMode = ApplyMode.SYNC;
 
-  const records = buildApplyRecords(config.enabledAgents);
+  await validateBeforeApply();
+  const { records } = await buildApplyRecords(config.enabledAgents);
   const applied = await applyRecords(records, ApplyMode.SYNC);
   state.installRecords = applied.results;
   state.lastSyncVersion = 'v1';
@@ -104,11 +122,19 @@ export const runSync = async (args) => {
   printJson({ command: 'sync', mode: applied.mode, records: applied.results.length });
 };
 
-export const runDoctorCommand = async () => {
+export const runDoctorCommand = async (args) => {
   const config = await loadConfig();
   const state = await loadState();
   const report = await runDoctor(config, state);
-  printJson({ command: 'doctor', report });
+  if (hasFlag(args, '--json')) {
+    printJson({ command: 'doctor', report });
+    return;
+  }
+
+  printTable('Doctor Summary', summarizeDoctorRows(report));
+  if (hasFlag(args, '--verbose')) {
+    printJson({ command: 'doctor', report });
+  }
 };
 
 export const runList = async () => {
@@ -119,6 +145,7 @@ export const runList = async () => {
   const skills = await readDirNames(path.join(standardsRoot, 'skills'));
   const workflows = await readDirNames(path.join(standardsRoot, 'workflows'));
   const mcp = await readDirNames(path.join(standardsRoot, 'mcp'));
+  const agents = await readDirNames(path.join(standardsRoot, 'agents'));
 
   printJson({
     command: 'list',
@@ -127,7 +154,8 @@ export const runList = async () => {
     assets: {
       skills,
       workflows,
-      mcp
+      mcp,
+      agents
     },
     backups: state.backups.map((item) => item.name)
   });
@@ -202,7 +230,8 @@ export const runRemove = async () => {
 export const runUpdate = async () => {
   const config = await loadConfig();
   const state = await loadState();
-  const records = buildApplyRecords(config.enabledAgents);
+  await validateBeforeApply();
+  const { records } = await buildApplyRecords(config.enabledAgents);
   const applied = await applyRecords(records, config.applyMode);
   state.installRecords = applied.results;
   state.lastSyncVersion = 'v1';
@@ -220,7 +249,7 @@ export const runCommand = async (command, args) => {
     case 'sync':
       return runSync(args);
     case 'doctor':
-      return runDoctorCommand();
+      return runDoctorCommand(args);
     case 'list':
       return runList();
     case 'update':
@@ -234,6 +263,7 @@ export const runCommand = async (command, args) => {
     case 'remove':
       return runRemove();
     default:
+      printMessage('error', `Unsupported command: ${command}`);
       throw new Error(`Unsupported command: ${command}`);
   }
 };

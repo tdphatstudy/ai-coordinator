@@ -1,9 +1,38 @@
 {
   "agent": "claude",
-  "targetBase": "~/.claude",
-  "mappings": {
-    "skills": "skills",
-    "workflows": "workflows",
-    "mcp": "mcp"
-  }
+  "displayName": "Claude Code",
+  "officialDocs": {
+    "directory": "https://code.claude.com/docs/en/claude-directory",
+    "skills": "https://code.claude.com/docs/en/skills",
+    "mcp": "https://code.claude.com/docs/en/mcp"
+  },
+  "verifiedAt": "2026-05-20",
+  "capabilities": {
+    "supportsSkills": true,
+    "supportsWorkflows": true,
+    "supportsMcp": true,
+    "supportsSymlink": true
+  },
+  "targetCandidates": {
+    "skills": [
+      "~/.claude/skills",
+      "${PROJECT_ROOT}/.claude/skills"
+    ],
+    "workflows": [
+      "~/.claude/commands",
+      "${PROJECT_ROOT}/.claude/commands"
+    ],
+    "mcp": [
+      "~/.claude/mcp",
+      "${PROJECT_ROOT}/.claude/mcp"
+    ],
+    "agents": [
+      "~/.claude/agents",
+      "${PROJECT_ROOT}/.claude/agents"
+    ]
+  },
+  "notes": [
+    "Claude directory supports both user and project scopes.",
+    "Project-level MCP can also be exported to .mcp.json from coordinator-managed presets when needed."
+  ]
 }

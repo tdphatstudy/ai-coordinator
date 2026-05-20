@@ -1,14 +1,29 @@
 {
   "presetId": "provider-placeholders",
-  "description": "Provider presets with placeholders only",
+  "id": "provider_placeholders_secure",
+  "description": "Provider presets with placeholders only and strict secret-handling guidance",
+  "scope": "provider_templates",
+  "supported_agents": ["claude", "codex", "qwen", "antigravity"],
+  "source": "official_plus_curated_v1",
   "providers": [
     {
       "name": "openai",
-      "apiKeyEnv": "OPENAI_API_KEY"
+      "apiKeyEnv": "OPENAI_API_KEY",
+      "configHint": "Set env var outside repo and load through runtime environment"
     },
     {
       "name": "anthropic",
-      "apiKeyEnv": "ANTHROPIC_API_KEY"
+      "apiKeyEnv": "ANTHROPIC_API_KEY",
+      "configHint": "Set env var outside repo and load through runtime environment"
+    },
+    {
+      "name": "google",
+      "apiKeyEnv": "GOOGLE_API_KEY",
+      "configHint": "Set env var outside repo and load through runtime environment"
     }
+  ],
+  "constraints": [
+    "never_store_api_keys_in_repo",
+    "use_environment_variables_only"
   ]
 }

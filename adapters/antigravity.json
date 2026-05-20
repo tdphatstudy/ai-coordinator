@@ -1,9 +1,38 @@
 {
   "agent": "antigravity",
-  "targetBase": "~/.antigravity",
-  "mappings": {
-    "skills": "skills",
-    "workflows": "workflows",
-    "mcp": "mcp"
-  }
+  "displayName": "Antigravity CLI 2.0",
+  "officialDocs": {
+    "overview": "https://antigravity.google/docs/cli-overview",
+    "product": "https://antigravity.google/product/antigravity-cli",
+    "repository": "https://github.com/google-antigravity/antigravity-cli"
+  },
+  "verifiedAt": "2026-05-20",
+  "capabilities": {
+    "supportsSkills": true,
+    "supportsWorkflows": true,
+    "supportsMcp": true,
+    "supportsSymlink": true
+  },
+  "targetCandidates": {
+    "skills": [
+      "~/.antigravity/skills",
+      "${PROJECT_ROOT}/.antigravity/skills"
+    ],
+    "workflows": [
+      "~/.antigravity/workflows",
+      "${PROJECT_ROOT}/.antigravity/workflows"
+    ],
+    "mcp": [
+      "~/.antigravity/mcp",
+      "${PROJECT_ROOT}/.antigravity/mcp"
+    ],
+    "agents": [
+      "~/.antigravity/agents",
+      "${PROJECT_ROOT}/.antigravity/agents"
+    ]
+  },
+  "notes": [
+    "Public docs currently focus on overview and installation, not explicit config path tables.",
+    "Adapter keeps conservative defaults and supports project overrides to avoid hard failures."
+  ]
 }

@@ -1,9 +1,38 @@
 {
   "agent": "qwen",
-  "targetBase": "~/.qwen",
-  "mappings": {
-    "skills": "skills",
-    "workflows": "workflows",
-    "mcp": "mcp"
-  }
+  "displayName": "Qwen Code",
+  "officialDocs": {
+    "configuration": "https://qwenlm.github.io/qwen-code-docs/en/users/configuration/settings/",
+    "docsHome": "https://qwenlm.github.io/qwen-code-docs/en/",
+    "repository": "https://github.com/QwenLM/qwen-code"
+  },
+  "verifiedAt": "2026-05-20",
+  "capabilities": {
+    "supportsSkills": true,
+    "supportsWorkflows": true,
+    "supportsMcp": true,
+    "supportsSymlink": true
+  },
+  "targetCandidates": {
+    "skills": [
+      "~/.qwen/skills",
+      "${PROJECT_ROOT}/.qwen/skills"
+    ],
+    "workflows": [
+      "~/.qwen/workflows",
+      "${PROJECT_ROOT}/.qwen/workflows"
+    ],
+    "mcp": [
+      "~/.qwen/mcp",
+      "${PROJECT_ROOT}/.qwen/mcp"
+    ],
+    "agents": [
+      "~/.qwen/agents",
+      "${PROJECT_ROOT}/.qwen/agents"
+    ]
+  },
+  "notes": [
+    "Qwen uses layered settings with project and user scopes.",
+    "System-level settings exist and can override user defaults in managed environments."
+  ]
 }
