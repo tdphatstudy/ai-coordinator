@@ -1,0 +1,13 @@
+{
+  "name": "ai-coordinator-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "coordinator": "node packages/coordinator-cli/bin/ai-coordinator.js",
+    "doctor": "node packages/coordinator-cli/bin/ai-coordinator.js doctor",
+    "init": "node packages/coordinator-cli/bin/ai-coordinator.js init"
+  }
+}

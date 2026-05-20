@@ -1,0 +1,16 @@
+{
+  "presetId": "local-default",
+  "description": "Local-safe MCP baseline without embedded secrets",
+  "servers": [
+    {
+      "name": "filesystem",
+      "enabled": true,
+      "mode": "local"
+    },
+    {
+      "name": "git",
+      "enabled": true,
+      "mode": "local"
+    }
+  ]
+}

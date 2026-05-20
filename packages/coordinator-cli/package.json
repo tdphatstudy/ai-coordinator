@@ -1,0 +1,16 @@
+{
+  "name": "agent-coordinator",
+  "version": "0.1.0",
+  "description": "Cross-agent skills/workflow/MCP coordinator CLI",
+  "type": "module",
+  "bin": {
+    "agent-coordinator": "bin/ai-coordinator.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node bin/ai-coordinator.js",
+    "doctor": "node bin/ai-coordinator.js doctor"
+  }
+}

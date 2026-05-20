@@ -1,0 +1,9 @@
+{
+  "agent": "codex",
+  "targetBase": "~/.codex",
+  "mappings": {
+    "skills": "skills",
+    "workflows": "workflows",
+    "mcp": "mcp"
+  }
+}

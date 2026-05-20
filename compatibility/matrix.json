@@ -1,0 +1,29 @@
+{
+  "version": "v1",
+  "agents": [
+    {
+      "id": "claude",
+      "os": ["windows", "linux", "macos"],
+      "features": ["init", "link", "sync", "doctor", "priority", "update", "backup", "restore", "remove"]
+    },
+    {
+      "id": "codex",
+      "os": ["windows", "linux", "macos"],
+      "features": ["init", "link", "sync", "doctor", "priority", "update", "backup", "restore", "remove"]
+    },
+    {
+      "id": "qwen",
+      "os": ["windows", "linux", "macos"],
+      "features": ["init", "link", "sync", "doctor", "priority", "update", "backup", "restore", "remove"]
+    },
+    {
+      "id": "antigravity",
+      "os": ["windows", "linux", "macos"],
+      "features": ["init", "link", "sync", "doctor", "priority", "update", "backup", "restore", "remove"]
+    }
+  ],
+  "notes": [
+    "When symlink/junction fails, CLI falls back to sync mode.",
+    "Discoverability depends on agent-side file-based loading behavior."
+  ]
+}

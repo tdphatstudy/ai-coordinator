@@ -1,0 +1,9 @@
+{
+  "agent": "qwen",
+  "targetBase": "~/.qwen",
+  "mappings": {
+    "skills": "skills",
+    "workflows": "workflows",
+    "mcp": "mcp"
+  }
+}

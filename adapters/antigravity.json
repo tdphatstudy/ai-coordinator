@@ -1,0 +1,9 @@
+{
+  "agent": "antigravity",
+  "targetBase": "~/.antigravity",
+  "mappings": {
+    "skills": "skills",
+    "workflows": "workflows",
+    "mcp": "mcp"
+  }
+}

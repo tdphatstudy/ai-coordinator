@@ -1,0 +1,9 @@
+{
+  "agent": "claude",
+  "targetBase": "~/.claude",
+  "mappings": {
+    "skills": "skills",
+    "workflows": "workflows",
+    "mcp": "mcp"
+  }
+}
