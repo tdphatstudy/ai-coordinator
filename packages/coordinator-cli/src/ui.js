@@ -43,10 +43,23 @@ const createBox = (title, lines, accentColor = 'brightBlue') => {
   return colorize(accentColor, [top, titleLine, divider, ...middle, bottom].join('\n'));
 };
 
-export const printBanner = (force = false) => {
-  if (bannerPrinted && !force) {
-    return;
-  }
+const getTerminalSize = () => ({
+  width: process.stdout.columns || 120,
+  height: process.stdout.rows || 40
+});
+
+const centerLines = (lines) => {
+  const { width, height } = getTerminalSize();
+  const topPadding = Math.max(0, Math.floor((height - lines.length) / 2));
+  const paddedLines = lines.map((line) => {
+    const lineLength = stripAnsi(line).length;
+    const leftPadding = Math.max(0, Math.floor((width - lineLength) / 2));
+    return `${' '.repeat(leftPadding)}${line}`;
+  });
+  return `${'\n'.repeat(topPadding)}${paddedLines.join('\n')}\n`;
+};
+
+const getBannerLines = () => {
   const pixelLogo = [
     '████████╗██████╗ ██████╗ ██╗  ██╗ █████╗ ████████╗',
     '╚══██╔══╝██╔══██╗██╔══██╗██║  ██║██╔══██╗╚══██╔══╝',
@@ -79,8 +92,26 @@ export const printBanner = (force = false) => {
     'https://tdphat.io.vn/'
   ]);
 
-  process.stdout.write(`${logoLines.join('\n')}\n`);
-  process.stdout.write(`${shell}\n\n`);
+  return [...logoLines, ...shell.split('\n')];
+};
+
+export const renderInteractiveScreen = (title, rows, footer) => {
+  const lines = [
+    ...getBannerLines(),
+    '',
+    colorize('cyan', title),
+    ...rows,
+    '',
+    colorize('gray', footer)
+  ];
+  process.stdout.write(centerLines(lines));
+};
+
+export const printBanner = (force = false) => {
+  if (bannerPrinted && !force) {
+    return;
+  }
+  process.stdout.write(`${getBannerLines().join('\n')}\n\n`);
   bannerPrinted = true;
 };
 

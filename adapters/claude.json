@@ -13,22 +13,28 @@
     "supportsMcp": true,
     "supportsSymlink": true
   },
+  "assetLayouts": {
+    "skills": "standard_tree",
+    "workflows": "standard_tree",
+    "mcp": "standard_tree",
+    "agents": "standard_tree"
+  },
   "targetCandidates": {
     "skills": [
-      "~/.claude/skills",
-      "${PROJECT_ROOT}/.claude/skills"
+      "~/.claude/skills/ai-coordinator",
+      "${PROJECT_ROOT}/.claude/skills/ai-coordinator"
     ],
     "workflows": [
-      "~/.claude/commands",
-      "${PROJECT_ROOT}/.claude/commands"
+      "~/.claude/commands/ai-coordinator",
+      "${PROJECT_ROOT}/.claude/commands/ai-coordinator"
     ],
     "mcp": [
-      "~/.claude/mcp",
-      "${PROJECT_ROOT}/.claude/mcp"
+      "~/.claude/mcp/ai-coordinator",
+      "${PROJECT_ROOT}/.claude/mcp/ai-coordinator"
     ],
     "agents": [
-      "~/.claude/agents",
-      "${PROJECT_ROOT}/.claude/agents"
+      "~/.claude/agents/ai-coordinator",
+      "${PROJECT_ROOT}/.claude/agents/ai-coordinator"
     ]
   },
   "notes": [

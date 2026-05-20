@@ -13,22 +13,28 @@
     "supportsMcp": true,
     "supportsSymlink": true
   },
+  "assetLayouts": {
+    "skills": "standard_tree",
+    "workflows": "standard_tree",
+    "mcp": "standard_tree",
+    "agents": "standard_tree"
+  },
   "targetCandidates": {
     "skills": [
-      "~/.qwen/skills",
-      "${PROJECT_ROOT}/.qwen/skills"
+      "~/.qwen/skills/ai-coordinator",
+      "${PROJECT_ROOT}/.qwen/skills/ai-coordinator"
     ],
     "workflows": [
-      "~/.qwen/workflows",
-      "${PROJECT_ROOT}/.qwen/workflows"
+      "~/.qwen/workflows/ai-coordinator",
+      "${PROJECT_ROOT}/.qwen/workflows/ai-coordinator"
     ],
     "mcp": [
-      "~/.qwen/mcp",
-      "${PROJECT_ROOT}/.qwen/mcp"
+      "~/.qwen/mcp/ai-coordinator",
+      "${PROJECT_ROOT}/.qwen/mcp/ai-coordinator"
     ],
     "agents": [
-      "~/.qwen/agents",
-      "${PROJECT_ROOT}/.qwen/agents"
+      "~/.qwen/agents/ai-coordinator",
+      "${PROJECT_ROOT}/.qwen/agents/ai-coordinator"
     ]
   },
   "notes": [

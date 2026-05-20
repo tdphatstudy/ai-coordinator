@@ -1,7 +1,7 @@
 import readline from 'node:readline';
 import { CommandId } from './enums.js';
 import { runCommand } from './commands.js';
-import { printBanner, printMessage } from './ui.js';
+import { printBanner, printMessage, renderInteractiveScreen } from './ui.js';
 
 const MenuAction = Object.freeze({
   QUICK_SETUP: 'quick_setup',
@@ -45,7 +45,7 @@ const helpText = `agent-coordinator commands:
   init [--agents all|claude,codex,qwen,antigravity] [--mode auto|link|sync]
   link [--agents ...]
   sync [--agents ...]
-  doctor [--json] [--verbose]
+  doctor [--json] [--verbose] [--strict]
   list
   update
   priority [--agent name --order agent_global,coordinator_shared,project_local,user_override]
@@ -61,30 +61,28 @@ const clearScreen = () => {
 
 const renderSingleSelect = (title, options, cursor, footer) => {
   clearScreen();
-  printBanner(true);
-  process.stdout.write(`\u001b[96m${title}\u001b[0m\n`);
+  const lines = [];
   for (let index = 0; index < options.length; index += 1) {
     const isFocused = index === cursor;
     const pointer = isFocused ? '❯' : ' ';
-    process.stdout.write(`${pointer} ${options[index].label}\n`);
+    lines.push(`${pointer} ${options[index].label}`);
   }
-  process.stdout.write(`\n\u001b[90m${footer}\u001b[0m\n`);
+  renderInteractiveScreen(title, lines, footer);
 };
 
 const renderMultiSelectAgents = (cursor, selectedSet) => {
   clearScreen();
-  printBanner(true);
-  process.stdout.write('\u001b[96mSelect agents\u001b[0m\n');
-  process.stdout.write('❯ all\n');
+  const lines = [];
+  lines.push('  all');
   for (let index = 0; index < selectableAgents.length; index += 1) {
     const option = selectableAgents[index];
     const isFocused = index === cursor;
     const isSelected = selectedSet.has(option.id);
     const pointer = isFocused ? '❯' : ' ';
     const marker = isSelected ? '[x]' : '[ ]';
-    process.stdout.write(`${pointer} ${marker} ${option.label}\n`);
+    lines.push(`${pointer} ${marker} ${option.label}`);
   }
-  process.stdout.write('\n\u001b[90mUse Up/Down to move, Space to toggle, Enter to confirm\u001b[0m\n');
+  renderInteractiveScreen('Select agents', lines, 'Use Up/Down to move, Space to toggle, Enter to confirm');
 };
 
 const readKeySelection = (renderer, maxIndex, onEnter, onSpace) => {
@@ -183,6 +181,42 @@ const selectAgents = async () => {
   return value;
 };
 
+const waitPostCommandAction = async () => {
+  return new Promise((resolve) => {
+    const cleanup = () => {
+      process.stdin.removeListener('keypress', handleKeypress);
+      if (process.stdin.isTTY) {
+        process.stdin.setRawMode(false);
+      }
+      process.stdin.pause();
+    };
+
+    const handleKeypress = (_str, key) => {
+      if (key.name === 'return') {
+        cleanup();
+        resolve('menu');
+        return;
+      }
+      if (key.name === 'q' || key.name === 'escape') {
+        cleanup();
+        resolve('exit');
+        return;
+      }
+      if (key.ctrl && key.name === 'c') {
+        cleanup();
+        process.exit(0);
+      }
+    };
+
+    readline.emitKeypressEvents(process.stdin);
+    if (process.stdin.isTTY) {
+      process.stdin.setRawMode(true);
+    }
+    process.stdin.resume();
+    process.stdin.on('keypress', handleKeypress);
+  });
+};
+
 const runInteractiveMenu = async () => {
   if (!process.stdin.isTTY || !process.stdout.isTTY) {
     printBanner();
@@ -191,50 +225,60 @@ const runInteractiveMenu = async () => {
     return;
   }
 
-  const action = await selectMenuAction();
-  if (!action || action === MenuAction.EXIT) {
+  while (true) {
+    const action = await selectMenuAction();
+    if (!action || action === MenuAction.EXIT) {
+      clearScreen();
+      printBanner();
+      printMessage('warn', 'Exit without changes');
+      return;
+    }
+
+    let command = CommandId.LIST;
+    let args = [];
+
+    if (action === MenuAction.QUICK_SETUP) {
+      const mode = await selectSetupMode();
+      const agents = await selectAgents();
+      command = CommandId.INIT;
+      args = ['--mode', mode, '--agents', agents];
+    }
+    if (action === MenuAction.DOCTOR) {
+      command = CommandId.DOCTOR;
+    }
+    if (action === MenuAction.LIST) {
+      command = CommandId.LIST;
+    }
+    if (action === MenuAction.UPDATE) {
+      command = CommandId.UPDATE;
+    }
+    if (action === MenuAction.BACKUP) {
+      command = CommandId.BACKUP;
+    }
+    if (action === MenuAction.RESTORE) {
+      command = CommandId.RESTORE;
+    }
+    if (action === MenuAction.REMOVE) {
+      command = CommandId.REMOVE;
+    }
+    if (action === MenuAction.PRIORITY) {
+      command = CommandId.PRIORITY;
+    }
+
     clearScreen();
     printBanner();
-    printMessage('warn', 'Exit without changes');
-    return;
+    printMessage('info', `Executing command: ${command}`);
+    await runCommand(command, args);
+    printMessage('success', `Done: ${command}`);
+    printMessage('info', 'Press Enter to return menu, Q/Esc to exit');
+    const postAction = await waitPostCommandAction();
+    if (postAction === 'exit') {
+      clearScreen();
+      printBanner();
+      printMessage('warn', 'Exit after command execution');
+      return;
+    }
   }
-
-  let command = CommandId.LIST;
-  let args = [];
-
-  if (action === MenuAction.QUICK_SETUP) {
-    const mode = await selectSetupMode();
-    const agents = await selectAgents();
-    command = CommandId.INIT;
-    args = ['--mode', mode, '--agents', agents];
-  }
-  if (action === MenuAction.DOCTOR) {
-    command = CommandId.DOCTOR;
-  }
-  if (action === MenuAction.LIST) {
-    command = CommandId.LIST;
-  }
-  if (action === MenuAction.UPDATE) {
-    command = CommandId.UPDATE;
-  }
-  if (action === MenuAction.BACKUP) {
-    command = CommandId.BACKUP;
-  }
-  if (action === MenuAction.RESTORE) {
-    command = CommandId.RESTORE;
-  }
-  if (action === MenuAction.REMOVE) {
-    command = CommandId.REMOVE;
-  }
-  if (action === MenuAction.PRIORITY) {
-    command = CommandId.PRIORITY;
-  }
-
-  clearScreen();
-  printBanner();
-  printMessage('info', `Executing command: ${command}`);
-  await runCommand(command, args);
-  printMessage('success', `Done: ${command}`);
 };
 
 export const runCli = async (argv) => {

@@ -51,13 +51,20 @@ The CLI includes a startup banner and status icons, and includes project brandin
 - `init` - initialize config/state and apply assets to selected agents
 - `link` - force link/junction mode
 - `sync` - force copy/sync mode
-- `doctor [--json] [--verbose]` - show health, discoverability, docs sources, capabilities
+- `doctor [--json] [--verbose] [--strict]` - show health, discoverability, docs sources, capabilities, and verification level (`verified`, `partial`, `assumed`); `--strict` exits non-zero if any agent is not `verified`
 - `list` - list installed assets and backup ids
 - `update` - re-apply current standards to enabled agents
 - `priority` - inspect or set per-agent priority order
 - `backup` - snapshot managed targets
 - `restore` - restore from latest or specific backup
 - `remove` - uninstall managed assets
+
+## Adapter Layout Strategy
+- All supported agents use adapter-driven layouts so deploy behavior can be specialized without duplicating source standards.
+- Managed targets are installed under `ai-coordinator` subfolders to avoid replacing tool-native folders.
+- Current specialized layout:
+  - Codex skills use packaged directory format (`<skill>/SKILL.md` + `agents/openai.yaml`) for marketplace-style discoverability.
+  - Claude, Qwen, and Antigravity currently use standard tree layout.
 
 ## Priority Model
 Default layer order:

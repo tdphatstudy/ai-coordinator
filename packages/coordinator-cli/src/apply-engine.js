@@ -4,12 +4,42 @@ import { createBackup } from './backup.js';
 import { ApplyMode } from './enums.js';
 import { copyPath, ensureDir, fileExists, removePath } from './io.js';
 
+const ManagedSubfolderName = Object.freeze({
+  DEFAULT: 'ai-coordinator'
+});
+
 const linkDirectory = async (sourcePath, targetPath) => {
   const linkType = process.platform === 'win32' ? 'junction' : 'dir';
   await fs.symlink(sourcePath, targetPath, linkType);
 };
 
+const repairLegacyRootLink = async (record) => {
+  const parentPath = path.dirname(record.targetPath);
+  const targetName = path.basename(record.targetPath);
+  if (targetName !== ManagedSubfolderName.DEFAULT) {
+    return;
+  }
+
+  try {
+    const sourceRealPath = await fs.realpath(record.sourcePath).catch(() => path.resolve(record.sourcePath));
+    const parentRealPath = await fs.realpath(parentPath).catch(() => null);
+    if (!parentRealPath) {
+      return;
+    }
+
+    if (path.resolve(parentRealPath) !== path.resolve(sourceRealPath)) {
+      return;
+    }
+
+    await removePath(parentPath);
+    await ensureDir(parentPath);
+  } catch {
+    return;
+  }
+};
+
 const applyLink = async (record) => {
+  await repairLegacyRootLink(record);
   await ensureDir(path.dirname(record.targetPath));
   await removePath(record.targetPath);
   await linkDirectory(record.sourcePath, record.targetPath);
@@ -17,6 +47,7 @@ const applyLink = async (record) => {
 };
 
 const applySync = async (record) => {
+  await repairLegacyRootLink(record);
   await ensureDir(path.dirname(record.targetPath));
   await removePath(record.targetPath);
   await copyPath(record.sourcePath, record.targetPath);

@@ -18,6 +18,11 @@ export const AssetKind = Object.freeze({
   AGENTS: 'agents'
 });
 
+export const AssetLayout = Object.freeze({
+  STANDARD_TREE: 'standard_tree',
+  CODEX_SKILL_PACKAGE: 'codex_skill_package'
+});
+
 export const PriorityLayer = Object.freeze({
   AGENT_GLOBAL: 'agent_global',
   COORDINATOR_SHARED: 'coordinator_shared',
@@ -58,3 +63,9 @@ export const PriorityDefaultOrder = Object.freeze([
   PriorityLayer.PROJECT_LOCAL,
   PriorityLayer.USER_OVERRIDE
 ]);
+
+export const VerificationLevel = Object.freeze({
+  VERIFIED: 'verified',
+  PARTIAL: 'partial',
+  ASSUMED: 'assumed'
+});

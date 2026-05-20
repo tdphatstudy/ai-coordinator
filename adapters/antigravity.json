@@ -13,22 +13,28 @@
     "supportsMcp": true,
     "supportsSymlink": true
   },
+  "assetLayouts": {
+    "skills": "standard_tree",
+    "workflows": "standard_tree",
+    "mcp": "standard_tree",
+    "agents": "standard_tree"
+  },
   "targetCandidates": {
     "skills": [
-      "~/.antigravity/skills",
-      "${PROJECT_ROOT}/.antigravity/skills"
+      "~/.antigravity/skills/ai-coordinator",
+      "${PROJECT_ROOT}/.antigravity/skills/ai-coordinator"
     ],
     "workflows": [
-      "~/.antigravity/workflows",
-      "${PROJECT_ROOT}/.antigravity/workflows"
+      "~/.antigravity/workflows/ai-coordinator",
+      "${PROJECT_ROOT}/.antigravity/workflows/ai-coordinator"
     ],
     "mcp": [
-      "~/.antigravity/mcp",
-      "${PROJECT_ROOT}/.antigravity/mcp"
+      "~/.antigravity/mcp/ai-coordinator",
+      "${PROJECT_ROOT}/.antigravity/mcp/ai-coordinator"
     ],
     "agents": [
-      "~/.antigravity/agents",
-      "${PROJECT_ROOT}/.antigravity/agents"
+      "~/.antigravity/agents/ai-coordinator",
+      "${PROJECT_ROOT}/.antigravity/agents/ai-coordinator"
     ]
   },
   "notes": [

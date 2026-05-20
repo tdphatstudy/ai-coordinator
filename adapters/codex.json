@@ -13,22 +13,28 @@
     "supportsMcp": true,
     "supportsSymlink": true
   },
+  "assetLayouts": {
+    "skills": "codex_skill_package",
+    "workflows": "standard_tree",
+    "mcp": "standard_tree",
+    "agents": "standard_tree"
+  },
   "targetCandidates": {
     "skills": [
-      "~/.codex/skills",
-      "${PROJECT_ROOT}/.codex/skills"
+      "${PROJECT_ROOT}/.codex/skills/ai-coordinator",
+      "~/.codex/skills/ai-coordinator"
     ],
     "workflows": [
-      "~/.codex/workflows",
-      "${PROJECT_ROOT}/.codex/workflows"
+      "${PROJECT_ROOT}/.codex/workflows/ai-coordinator",
+      "~/.codex/workflows/ai-coordinator"
     ],
     "mcp": [
-      "~/.codex/mcp",
-      "${PROJECT_ROOT}/.codex/mcp"
+      "${PROJECT_ROOT}/.codex/mcp/ai-coordinator",
+      "~/.codex/mcp/ai-coordinator"
     ],
     "agents": [
-      "~/.codex/agents",
-      "${PROJECT_ROOT}/.codex/agents"
+      "${PROJECT_ROOT}/.codex/agents/ai-coordinator",
+      "~/.codex/agents/ai-coordinator"
     ]
   },
   "notes": [

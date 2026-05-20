@@ -1,10 +1,11 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { AgentId, AssetKind, SupportedAgents } from './enums.js';
-import { resolveHomeDir, resolveProjectRoot } from './paths.js';
+import { resolveCoordinatorRepoRoot, resolveHomeDir, resolveProjectRoot } from './paths.js';
 
 const home = resolveHomeDir();
 const projectRoot = resolveProjectRoot();
+const coordinatorRepoRoot = resolveCoordinatorRepoRoot();
 
 const adapterFileByAgent = Object.freeze({
   [AgentId.CLAUDE]: 'claude.json',
@@ -33,7 +34,7 @@ const pickCandidate = async (candidates) => {
 
 const readAdapterByAgent = async (agentId) => {
   const fileName = adapterFileByAgent[agentId];
-  const filePath = path.join(projectRoot, 'adapters', fileName);
+  const filePath = path.join(coordinatorRepoRoot, 'adapters', fileName);
   const content = await fs.readFile(filePath, 'utf8');
   return JSON.parse(content);
 };

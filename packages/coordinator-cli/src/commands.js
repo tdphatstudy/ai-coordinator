@@ -23,10 +23,19 @@ const parseAgentsArg = (args) => {
   if (value === 'all') {
     return [...SupportedAgents];
   }
-  return value
+  const requested = value
     .split(',')
     .map((item) => item.trim().toLowerCase())
-    .filter((item) => SupportedAgents.includes(item));
+    .filter(Boolean);
+  const selected = requested.filter((item) => SupportedAgents.includes(item));
+  const unsupported = requested.filter((item) => !SupportedAgents.includes(item));
+  if (unsupported.length > 0) {
+    throw new Error(`Unsupported agents: ${unsupported.join(', ')}`);
+  }
+  if (selected.length === 0) {
+    throw new Error('No valid agents selected');
+  }
+  return selected;
 };
 
 const parseMode = (args) => {
@@ -43,7 +52,7 @@ const summarizeDoctorRows = (report) => Object.entries(report).map(([agent, deta
   const assetsState = details.assets
     .map((asset) => `${asset.kind}:${asset.exists ? asset.linkType : 'missing'}/${asset.itemCount}`)
     .join(' | ');
-  return `${agent} | discoverable=${details.discoverable} | linked_or_synced=${details.linked_or_synced} | assets=${assetsState}`;
+  return `${agent} | verification=${details.verification_level} | discoverable=${details.discoverable} | linked_or_synced=${details.linked_or_synced} | assets=${assetsState}`;
 });
 
 const validateBeforeApply = async () => {
@@ -136,14 +145,26 @@ export const runDoctorCommand = async (args) => {
   const config = await loadConfig();
   const state = await loadState();
   const report = await runDoctor(config, state);
-  if (hasFlag(args, '--json')) {
+  const isJson = hasFlag(args, '--json');
+  const isVerbose = hasFlag(args, '--verbose');
+  const isStrict = hasFlag(args, '--strict');
+  if (isJson) {
     printJson({ command: 'doctor', report });
-    return;
+  } else {
+    printTable('Doctor Summary', summarizeDoctorRows(report));
+    if (isVerbose) {
+      printJson({ command: 'doctor', report });
+    }
   }
 
-  printTable('Doctor Summary', summarizeDoctorRows(report));
-  if (hasFlag(args, '--verbose')) {
-    printJson({ command: 'doctor', report });
+  if (isStrict) {
+    const notVerified = Object.entries(report).filter(([, details]) => details.verification_level !== 'verified');
+    if (notVerified.length > 0) {
+      const summary = notVerified
+        .map(([agent, details]) => `${agent}:${details.verification_level}`)
+        .join(', ');
+      throw new Error(`Strict doctor failed. Non-verified agents: ${summary}`);
+    }
   }
 };
 
